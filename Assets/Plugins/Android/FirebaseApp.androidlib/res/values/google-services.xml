@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id">
+  <string name="firebase_database_url" translatable="false">https://swordattack-default-rtdb.firebaseio.com/</string>
+  <string name="gcm_defaultSenderId" translatable="false">169285644856</string>
+  <string name="google_storage_bucket" translatable="false">swordattack.appspot.com</string>
+  <string name="project_id" translatable="false">swordattack</string>
+  <string name="google_api_key" translatable="false">AIzaSyA4VV-cHHD1Yu5ucxekbjFfGosA3SHlG5g</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyA4VV-cHHD1Yu5ucxekbjFfGosA3SHlG5g</string>
+  <string name="google_app_id" translatable="false">1:169285644856:android:d0e8a9faaf9d80f0766ccd</string>
+  <string name="default_web_client_id" translatable="false">169285644856-hj4mcnbt73vf2r7440b0h9ftvk4026n2.apps.googleusercontent.com</string>
+</resources>

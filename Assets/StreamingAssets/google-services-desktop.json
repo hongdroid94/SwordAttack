@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "169285644856",
+    "project_id": "swordattack",
+    "storage_bucket": "swordattack.appspot.com",
+    "firebase_url": "https://swordattack-default-rtdb.firebaseio.com/"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169285644856:android:d0e8a9faaf9d80f0766ccd",
+        "android_client_info": {
+          "package_name": "com.hongrani.swordattack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "169285644856-hj4mcnbt73vf2r7440b0h9ftvk4026n2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4VV-cHHD1Yu5ucxekbjFfGosA3SHlG5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "169285644856-hj4mcnbt73vf2r7440b0h9ftvk4026n2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "169285644856-ma6u4dgotllk865pmf2v6sk0tgv4eq1c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hongrani.swordattack"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
