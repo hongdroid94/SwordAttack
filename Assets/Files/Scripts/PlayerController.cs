@@ -177,13 +177,15 @@ public class PlayerController : MonoBehaviour
 
 	void Defect(bool isDie, int health, int damageDir) 
 	{
+		// Á×À½
 		if (isKnockback) return;
 
 		if (!this.isDie && isDie)
 		{
 			this.isDie = true;
 			ePlayerState = EPlayerState.DIE;
-			DOVirtual.DelayedCall(dieTime, () => { Die.OnNext(0); print("Die"); }) ;
+			FindObjectOfType<GamePanel>().StopStopWatch();
+			DOVirtual.DelayedCall(dieTime, () => { Die.OnNext(0); print("Die"); UIManager.Inst.ShowEndPanel(true); }) ;
 		}
 
 		// ³Ë¹é

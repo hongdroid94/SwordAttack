@@ -21,6 +21,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] float playerDetectDistance;
     [SerializeField] float groundDistance;
     [SerializeField] float moveSpeed;
+    [SerializeField] float wallDistance;
     [SerializeField] int attackSpriteIndex;
     [SerializeField] bool isProjectileAttack;
 
@@ -28,6 +29,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] Transform projectilePos;
     [SerializeField] Vector2 attackSize;
+    [SerializeField] Transform groundPos;
 
     Rigidbody2D rbody;
     SpriteRenderer spriteRenderer;
@@ -120,6 +122,15 @@ public class EnemyController : MonoBehaviour
             isAttack = true;
             _eEnemyState = EEnemyState.ATTACK;
         }
+
+        // º® Ã¼Å© 
+        Debug.DrawRay(groundPos.position + Vector3.up * 0.5f, Vector3.right * rightValue * wallDistance, new Color(1, 1, 0));
+        RaycastHit2D rayWallHit = Physics2D.Raycast(groundPos.position + Vector3.up * 0.5f, Vector3.right * rightValue * wallDistance, wallDistance, tileLayer);
+        if (rayWallHit.collider != null) 
+        {
+            Turn();
+        }
+        
     }
 
 

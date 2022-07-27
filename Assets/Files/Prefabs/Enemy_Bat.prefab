@@ -142,11 +142,13 @@ MonoBehaviour:
   playerDetectDistance: 8
   groundDistance: 1.97
   moveSpeed: 1.5
+  wallDistance: 1
   attackSpriteIndex: 15
   isProjectileAttack: 1
   projectilePrefab: {fileID: 8029561571438824449, guid: b230c14807ac56a45bde2ab6d01d3b66, type: 3}
   projectilePos: {fileID: 4290391327381097996}
   attackSize: {x: 0, y: 0}
+  groundPos: {fileID: 4290391327827727074}
 --- !u!114 &4290391327539892585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,7 +202,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 648644175
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 255389193, guid: feba792022d2f3248bfb046e550b7a53, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

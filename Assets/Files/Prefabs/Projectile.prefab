@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2301883625297884173}
   - component: {fileID: 326659193431846558}
   - component: {fileID: 4200158413353314367}
+  - component: {fileID: 8399971014758886946}
   m_Layer: 8
   m_Name: Projectile
   m_TagString: Untagged
@@ -72,8 +73,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 14871495
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -1022700933, guid: 851dfde36c335af4598e6968daf7e039, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -99,6 +100,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  spriteRenderer: {fileID: 2301883625297884173}
+  hitSprites:
+  - {fileID: -1648714803, guid: fc7a6a6470b58104b9366e2d1aa2ec92, type: 3}
+  - {fileID: -244518005, guid: fc7a6a6470b58104b9366e2d1aa2ec92, type: 3}
+  - {fileID: -986301116, guid: fc7a6a6470b58104b9366e2d1aa2ec92, type: 3}
+  - {fileID: -1638401408, guid: fc7a6a6470b58104b9366e2d1aa2ec92, type: 3}
+  - {fileID: -1339383162, guid: fc7a6a6470b58104b9366e2d1aa2ec92, type: 3}
+  - {fileID: 1930222214, guid: fc7a6a6470b58104b9366e2d1aa2ec92, type: 3}
+  - {fileID: 536351396, guid: fc7a6a6470b58104b9366e2d1aa2ec92, type: 3}
 --- !u!58 &4200158413353314367
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -115,3 +125,24 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.26
+--- !u!50 &8399971014758886946
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8029561571438824449}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

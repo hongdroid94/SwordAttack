@@ -62,6 +62,7 @@ public class Ranking : MonoBehaviour
             sw.Stop(); // stop stopwatch
             Debug.Log(sw.Elapsed.ToString());
         }
+        // ??
         WriteNewRanking("hongdroid", sw.Elapsed.ToString());
     }
 
