@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
 	[SerializeField] TMP_InputField nickInput;
 	[SerializeField] Toggle soundToggle;
 	[SerializeField] Button startBtn;
+	[SerializeField] TMP_Text endTitleText;
+	[SerializeField] AdmobManager admobManager;
 
 	string _nickname;
 	public string Nickname 
@@ -64,6 +66,22 @@ public class UIManager : MonoBehaviour
 	public void ShowEndPanel(bool isDie) 
 	{
 		ShowPanel("EndPanel");
+		if (isDie)
+		{
+			endTitleText.text = "<color=red>YOU DIED</color>";
+		}
+		else 
+		{
+			endTitleText.text = "FINISH !";
+			ranking.WriteNewRanking(Nickname, gamePanel.stopWatch);
+
+		}
+
+		// ¾Öµå¸÷ ±¤°í 40%
+		if (Random.Range(0, 101) > 60) 
+		{
+			admobManager.ShowRewardAd();
+		}
 	}
 
 	public void ShowRankPanel() 
@@ -85,7 +103,7 @@ public class UIManager : MonoBehaviour
 		ShowPanel("GamePanel");
 		gamePanel.StartStopWatch();
 		player.SetActive(true);
-
+		SoundManager.Instance.PlayBGMSound();
 	}
 
 	public void NickInputEndEdit() 
@@ -93,8 +111,19 @@ public class UIManager : MonoBehaviour
 		Nickname = nickInput.text;
 	}
 
+	public void MenuCancelSound() 
+	{
+		SoundManager.Instance.PlaySFXSound("Menu_Cancel");
+	}
+
+	public void MenuConfirmSound()
+	{
+		SoundManager.Instance.PlaySFXSound("Menu_Confirm");
+	}
+
 	void Start()
 	{
+		Application.targetFrameRate = 60;
 		nickInput.text = Nickname;
 		soundToggle.isOn = OnSound;
 		Time.timeScale = 1;

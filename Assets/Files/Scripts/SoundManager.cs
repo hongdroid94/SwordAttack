@@ -41,11 +41,11 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != this)
-        {
-            Destroy(this.gameObject);
-        }
-        DontDestroyOnLoad(this.gameObject); //여러 씬에서 사용할 것.
+        //if (Instance != this)
+        //{
+        //    Destroy(this.gameObject);
+        //}
+        //DontDestroyOnLoad(this.gameObject); //여러 씬에서 사용할 것.
 
         bgmPlayer = GameObject.Find("BGMSoundPlayer").GetComponent<AudioSource>();
         sfxPlayer = GameObject.Find("SFXSoundPlayer").GetComponent<AudioSource>();
@@ -59,7 +59,7 @@ public class SoundManager : MonoBehaviour
         }
 
         // Start Background Music
-        PlayBGMSound(1f);
+        //PlayBGMSound(1f);
     }
 
     // 효과 사운드 재생 : 이름을 필수 매개변수, 볼륨을 선택적 매개변수로 지정

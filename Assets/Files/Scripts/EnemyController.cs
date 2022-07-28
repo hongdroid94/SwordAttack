@@ -162,6 +162,8 @@ public class EnemyController : MonoBehaviour
 
     void CheckAttack() 
     {
+        SoundManager.Instance.PlaySFXSound("Monster_Attack");
+
         if (isProjectileAttack)
         {
             Instantiate(projectilePrefab, projectilePos.position, Quaternion.identity).GetComponent<Bullet>().Init(rightValue);
@@ -183,6 +185,8 @@ public class EnemyController : MonoBehaviour
 
     void Defect(bool isDie, int health, int damageDir)
     {
+        SoundManager.Instance.PlaySFXSound("Monster_Damage");
+
         if (isDie) 
         {
             this.isDie = true;

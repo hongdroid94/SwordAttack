@@ -51,21 +51,6 @@ public class Ranking : MonoBehaviour
         ReadCurrentRanking();        
     }
 
-    public void OnClickSaveRank()
-    {
-        Stopwatch sw = new Stopwatch();
-        sw.Start(); // start stopwatch
-        
-        Thread.Sleep(Random.Range(1000, 5001));
-        if (sw.IsRunning)
-        {           
-            sw.Stop(); // stop stopwatch
-            Debug.Log(sw.Elapsed.ToString());
-        }
-        // ??
-        WriteNewRanking("hongdroid", sw.Elapsed.ToString());
-    }
-
     public void OpenRankingPanel()
     {
         if (!isPanelOpen)
@@ -81,14 +66,14 @@ public class Ranking : MonoBehaviour
 
     }
 
-
-
-    private void WriteNewRanking(string userName, string rankTime)
+    public void WriteNewRanking(string userName, string rankTime)
     {
         // write new ranking data
         RankingData rankingData = new RankingData(userName, rankTime);
         string json = JsonUtility.ToJson(rankingData);
+        databaseRef = FirebaseDatabase.DefaultInstance.RootReference;
         databaseRef.Push().SetRawJsonValueAsync(json);
+        print($"{userName} firebase upload {rankTime}");
     }    
 
     private void ReadCurrentRanking()

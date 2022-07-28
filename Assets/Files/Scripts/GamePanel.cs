@@ -14,6 +14,7 @@ public class GamePanel : MonoBehaviour
 	Damaged playerDamaged;
 	double elapsedTime;
 	bool isRunningStopwatch;
+	public string stopWatch;
 
 	[ContextMenu("StartStopWatch")]
 	public void StartStopWatch() 
@@ -52,7 +53,7 @@ public class GamePanel : MonoBehaviour
 			int min = (int)elapsedTime % 3600 / 60; 
 			int sec = (int)elapsedTime % 3600 % 60;
 			int milliSecond = (int)((elapsedTime % 1) * 100);
-			stopwatchText.text = stopwatchResultText.text = string.Format("{0:D2}:{1:D2}:{2:D2}", min, sec, milliSecond);
+			stopwatchText.text = stopwatchResultText.text = stopWatch = string.Format("{0:D2}:{1:D2}:{2:D2}", min, sec, milliSecond);
 		}
 
 		if (Input.GetKeyDown(KeyCode.Escape))

@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: hongdroid
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 196c86cb6f9a6174db72f63f97a71896, type: 2}
   m_sharedMaterial: {fileID: 2554893614548853660, guid: 196c86cb6f9a6174db72f63f97a71896, type: 2}
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '01 : 30'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 196c86cb6f9a6174db72f63f97a71896, type: 2}
   m_sharedMaterial: {fileID: 2554893614548853660, guid: 196c86cb6f9a6174db72f63f97a71896, type: 2}

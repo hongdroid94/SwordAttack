@@ -106,6 +106,18 @@ public class PlayerController : MonoBehaviour
 		ClimbCheck();
 	}
 
+	void OnTriggerEnter2D(Collider2D collision)
+	{
+		// Å¬¸®¾î
+		if (collision.CompareTag("EndFlag")) 
+		{
+			print("Win");
+			FindObjectOfType<GamePanel>().StopStopWatch();
+			UIManager.Inst.ShowEndPanel(false);
+			gameObject.SetActive(false);
+		}
+	}
+
 
 	void Move(Vector2 dir)
 	{
@@ -129,12 +141,14 @@ public class PlayerController : MonoBehaviour
 
 		if (!isJump) 
 		{
+			SoundManager.Instance.PlaySFXSound("Jump");
 			rbody.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
 		}
 		isClimbJump = false;
 		if (isClimb)
 		{
 			// º® Á¡ÇÁ
+			SoundManager.Instance.PlaySFXSound("Jump");
 			isClimbJump = true;
 			DOVirtual.DelayedCall(0.3f, () => isClimbJump = false);
 			rbody.velocity = new Vector2(-rightValue * climbJumpPower, 0.9f * climbJumpPower);
@@ -150,6 +164,7 @@ public class PlayerController : MonoBehaviour
 		{
 			StopAllCoroutines();
 			StartCoroutine(nameof(AttackCo));
+			SoundManager.Instance.PlaySFXSound("Player_Attack");
 		}
 	}
 
@@ -177,21 +192,25 @@ public class PlayerController : MonoBehaviour
 
 	void Defect(bool isDie, int health, int damageDir) 
 	{
-		// Á×À½
 		if (isKnockback) return;
 
 		if (!this.isDie && isDie)
 		{
+			// Á×À½
 			this.isDie = true;
 			ePlayerState = EPlayerState.DIE;
 			FindObjectOfType<GamePanel>().StopStopWatch();
-			DOVirtual.DelayedCall(dieTime, () => { Die.OnNext(0); print("Die"); UIManager.Inst.ShowEndPanel(true); }) ;
+			DOVirtual.DelayedCall(dieTime, () => { Die.OnNext(0); print("Die"); UIManager.Inst.ShowEndPanel(true); });
+			SoundManager.Instance.PlaySFXSound("Player_Die");
 		}
-
-		// ³Ë¹é
-		isKnockback = true;
-		rbody.AddForce(new Vector2(knockback.x * -damageDir, knockback.y), ForceMode2D.Impulse);
-		DOVirtual.DelayedCall(knockbackTime, () => isKnockback = false);
+		else 
+		{
+			// ³Ë¹é
+			isKnockback = true;
+			rbody.AddForce(new Vector2(knockback.x * -damageDir, knockback.y), ForceMode2D.Impulse);
+			DOVirtual.DelayedCall(knockbackTime, () => isKnockback = false);
+			SoundManager.Instance.PlaySFXSound("Player_Damage");
+		}
 	}
 
 
