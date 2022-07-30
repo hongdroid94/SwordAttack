@@ -106,6 +106,11 @@ public class UIManager : MonoBehaviour
 		SoundManager.Instance.PlayBGMSound();
 	}
 
+	public void QuitClick()
+	{
+		Application.Quit();
+	}
+
 	public void NickInputEndEdit() 
 	{
 		Nickname = nickInput.text;
