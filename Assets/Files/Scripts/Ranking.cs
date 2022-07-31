@@ -14,7 +14,7 @@ using System.Threading;
 public class Ranking : MonoBehaviour
 {    
     public GameObject contents;
-    public GameObject RankInfo;   // ·©Å· Á¤º¸
+    public GameObject RankInfo;   // ???? ????
     public GameObject RankingPanel;
     private bool isPanelOpen;
 
@@ -42,12 +42,16 @@ public class Ranking : MonoBehaviour
     }
 
     private DatabaseReference databaseRef;
-    
+
     void Start()
     {
         isPanelOpen = false;
         context = SynchronizationContext.Current;
-        databaseRef = FirebaseDatabase.DefaultInstance.RootReference;
+
+        AppOptions options = new AppOptions { DatabaseUrl = new Uri("https://swordattack-default-rtdb.firebaseio.com/") };
+        FirebaseApp app = FirebaseApp.Create(options);
+        databaseRef = FirebaseDatabase.GetInstance(app).RootReference;
+        //databaseRef = FirebaseDatabase.DefaultInstance.RootReference;        
         ReadCurrentRanking();        
     }
 
