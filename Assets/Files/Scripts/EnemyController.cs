@@ -98,13 +98,13 @@ public class EnemyController : MonoBehaviour
     {
         if (isDie) return;
 
-        // ¿òÁ÷ÀÓ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (!isAttack) 
         {
-            rbody.velocity = new Vector2(nextMove * moveSpeed, rbody.velocity.y);
+            rbody.linearVelocity = new Vector2(nextMove * moveSpeed, rbody.linearVelocity.y);
         }
        
-        // ¹Ù´Ú Ã¼Å©
+        // ï¿½Ù´ï¿½ Ã¼Å©
         Vector2 frontVec = new Vector2(rbody.position.x + nextMove * 0.3f, rbody.position.y);
         Debug.DrawRay(frontVec, Vector3.down * groundDistance, new Color(0, 1, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, groundDistance, tileLayer);
@@ -113,7 +113,7 @@ public class EnemyController : MonoBehaviour
             Turn();
         }
             
-        // ÇÃ·¹ÀÌ¾î °¡±î¿ì¸é °ø°Ý
+        // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         isRight = !spriteRenderer.flipX;
         Debug.DrawRay(rbody.position, Vector3.right * rightValue * playerDetectDistance, new Color(0, 1, 0));
         var rayHitPlayer = Physics2D.Raycast(rbody.position, Vector3.right * rightValue, playerDetectDistance, playerLayer);
@@ -123,7 +123,7 @@ public class EnemyController : MonoBehaviour
             _eEnemyState = EEnemyState.ATTACK;
         }
 
-        // º® Ã¼Å© 
+        // ï¿½ï¿½ Ã¼Å© 
         Debug.DrawRay(groundPos.position + Vector3.up * 0.5f, Vector3.right * rightValue * wallDistance, new Color(1, 1, 0));
         RaycastHit2D rayWallHit = Physics2D.Raycast(groundPos.position + Vector3.up * 0.5f, Vector3.right * rightValue * wallDistance, wallDistance, tileLayer);
         if (rayWallHit.collider != null) 

@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D collision)
 	{
-		// Å¬¸®¾î
+		// Å¬ï¿½ï¿½ï¿½ï¿½
 		if (collision.CompareTag("EndFlag")) 
 		{
 			print("Win");
@@ -124,7 +124,7 @@ public class PlayerController : MonoBehaviour
 		if (isClimbJump || isDie || isKnockback) return;
 
 		isRun = dir.x != 0;
-		rbody.velocity = new Vector2(dir.x * speed, rbody.velocity.y);
+		rbody.linearVelocity = new Vector2(dir.x * speed, rbody.linearVelocity.y);
 		if (dir.x > 0)
 		{
 			isRight = true;
@@ -147,11 +147,11 @@ public class PlayerController : MonoBehaviour
 		isClimbJump = false;
 		if (isClimb)
 		{
-			// º® Á¡ÇÁ
+			// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			SoundManager.Instance.PlaySFXSound("Jump");
 			isClimbJump = true;
 			DOVirtual.DelayedCall(0.3f, () => isClimbJump = false);
-			rbody.velocity = new Vector2(-rightValue * climbJumpPower, 0.9f * climbJumpPower);
+			rbody.linearVelocity = new Vector2(-rightValue * climbJumpPower, 0.9f * climbJumpPower);
 			isRight = !isRight;
 		}
 	}
@@ -175,7 +175,7 @@ public class PlayerController : MonoBehaviour
 
 		yield return new WaitForSeconds(attackTime / 6f);
 
-		// ¹Ú½º ¿µ¿ª °Ë»ç ÀûÀÏ°æ¿ì µ¥¹ÌÁö
+		// ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		var hits = Physics2D.BoxCastAll(rbody.position + new Vector2(1.16f, 0.21f) * rightValue, new Vector2(1.68f, 2.68f), 0, Vector2.right * rightValue, 1, enemyLayer);
 		for (int i = 0; i < hits.Length; i++)
 		{
@@ -196,7 +196,7 @@ public class PlayerController : MonoBehaviour
 
 		if (!this.isDie && isDie)
 		{
-			// Á×À½
+			// ï¿½ï¿½ï¿½ï¿½
 			this.isDie = true;
 			ePlayerState = EPlayerState.DIE;
 			FindObjectOfType<GamePanel>().StopStopWatch();
@@ -205,7 +205,7 @@ public class PlayerController : MonoBehaviour
 		}
 		else 
 		{
-			// ³Ë¹é
+			// ï¿½Ë¹ï¿½
 			isKnockback = true;
 			rbody.AddForce(new Vector2(knockback.x * -damageDir, knockback.y), ForceMode2D.Impulse);
 			DOVirtual.DelayedCall(knockbackTime, () => isKnockback = false);
@@ -233,7 +233,7 @@ public class PlayerController : MonoBehaviour
 
 		if (isClimb) 
 		{
-			rbody.velocity = new Vector2(rbody.velocity.x, rbody.velocity.y * climbFallSpeed);
+			rbody.linearVelocity = new Vector2(rbody.linearVelocity.x, rbody.linearVelocity.y * climbFallSpeed);
 		}
 	}
 }

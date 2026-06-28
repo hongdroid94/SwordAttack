@@ -1,36 +1,55 @@
 using System;
+using UnityEngine;
 using UnityEditor;
+using System.IO;
+using GooglePlayServices;
 using UnityEditor.Build;
-#if UNITY_2018_1_OR_NEWER
 using UnityEditor.Build.Reporting;
-#endif
-using UnityEditor.Callbacks;
 
-using GoogleMobileAds.Editor;
-
-#if UNITY_2018_1_OR_NEWER
-public class BuildPreProcessor : IPreprocessBuildWithReport
-#else
-public class BuildPreProcessor : IPreprocessBuild
-#endif
+namespace GoogleMobileAds.Editor
 {
-
-    public int callbackOrder { get { return 1; } }
-
-#if UNITY_2018_1_OR_NEWER
-    public void OnPreprocessBuild(BuildReport report)
-#else
-    public void OnPreprocessBuild(BuildTarget target, string path)
-#endif
+    /// <summary>
+    /// Pre-processor that performs common setup tasks for all platforms before a build.
+    /// </summary>
+    public class BuildPreProcessor : IPreprocessBuildWithReport
     {
-        if (!AssetDatabase.IsValidFolder("Assets/GoogleMobileAds"))
+        // Set the callback order to be before EDM4U.
+        // https://github.com/googlesamples/unity-jar-resolver/blob/master/source/AndroidResolver/src/PlayServicesPreBuild.cs#L39
+        public int callbackOrder { get { return -1; } }
+
+        private readonly static string _linkXmlAssetsPath =
+                Path.Combine(Application.dataPath, "GoogleMobileAds", "link.xml");
+
+        public void OnPreprocessBuild(BuildReport report)
         {
-            AssetDatabase.CreateFolder("Assets", "GoogleMobileAds");
+            // Unity's managed code stripping process does not inherently process `link.xml` files
+            // in UPM packages. This pre-processor copies the `link.xml` file from the UPM package
+            // to the Unity project's `Assets/GoogleMobileAds` directory if it does not exist.
+            if (!File.Exists(_linkXmlAssetsPath))
+            {
+                CopyLinkXml();
+            }
         }
 
-        if (AssetDatabase.IsValidFolder("Packages/com.google.ads.mobile"))
+        private static void CopyLinkXml()
         {
-            AssetDatabase.CopyAsset("Packages/com.google.ads.mobile/GoogleMobileAds/link.xml", "Assets/GoogleMobileAds/link.xml");
+            if (!AssetDatabase.IsValidFolder(Path.Combine("Assets", "GoogleMobileAds")))
+            {
+                AssetDatabase.CreateFolder("Assets", "GoogleMobileAds");
+            }
+            var pathUtils = ScriptableObject.CreateInstance<EditorPathUtils>();
+            if (pathUtils.IsPackageRootPath())
+            {
+                string parentDirectoryPath = pathUtils.GetParentDirectoryAssetPath();
+                string linkXmlPackagePath = Path.Combine(parentDirectoryPath, "link.xml");
+                if(String.IsNullOrEmpty(linkXmlPackagePath))
+                {
+                    Debug.LogWarning("link.xml not found in the package.");
+                    return;
+                }
+                AssetDatabase.CopyAsset(linkXmlPackagePath, _linkXmlAssetsPath);
+            }
+            AssetDatabase.Refresh();
         }
     }
 }

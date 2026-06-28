@@ -26,18 +26,18 @@ public class EnemyMove : MonoBehaviour
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // AI µ¿ÀÛ
+        // AI ï¿½ï¿½ï¿½ï¿½
         Invoke("Think", 5);
 
-        // ¹«ÇÑ ¹Ýº¹À¸·Î ¿¡³ÊÁöº¼ ¹ß»ç
-        // InvokeRepeating("Shot", 3.0f, 1.0f); // Áö¿¬½Ã°£ ¸¸Å­ Áö¿¬µÈ ÈÄ ¹Ýº¹ÁÖ±â ¸¸Å­ °è¼Ó ¹Ýº¹.
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Ýºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½
+        // InvokeRepeating("Shot", 3.0f, 1.0f); // ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ýºï¿½ï¿½Ö±ï¿½ ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ ï¿½Ýºï¿½.
     }
    
 
     void FixedUpdate()
     {
         // Move
-        rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
+        rigid.linearVelocity = new Vector2(nextMove, rigid.linearVelocity.y);
 
         // Check Platform
         Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.3f, rigid.position.y);
@@ -67,15 +67,15 @@ public class EnemyMove : MonoBehaviour
     void Think()
     {
         // Set Next Active
-        nextMove = Random.Range(-1, 2); // ÃÖ¼Ò °ªÀº ·£´ý ¹üÀ§ÀÌÁö¸¸ ÃÖ´ñ °ªÀº ·£´ý °ª¿¡¼­ Á¦¿ÜµÈ´Ù.
+        nextMove = Random.Range(-1, 2); // ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÜµÈ´ï¿½.
         
         // Sprite Animation
         anim.SetInteger("WalkSpeed", nextMove);
-        // flip sprite (½ºÇÁ¶óÀÌÆ® ¹æÇâ ÀüÈ¯)
+        // flip sprite (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯)
         if (nextMove != 0)
             spriteRenderer.flipX = nextMove == -1;
 
-        // Recurive (Àç±Í)
+        // Recurive (ï¿½ï¿½ï¿½)
         float nextThinkTime = Random.Range(2f, 5f);
         Invoke("Think", nextThinkTime);
     }
