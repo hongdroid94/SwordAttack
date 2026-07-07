@@ -1,0 +1,19 @@
+// Workaround for GMA 11 + Unity 6.4 namespace conflict (github issue #4157):
+// jetified-googlemobileads-unity uses namespace "com.google.unity.ads", so this
+// androidlib must declare a unique namespace via an explicit library module.
+apply plugin: 'com.android.library'
+
+android {
+    namespace "com.google.unity.ads.manifest"
+    compileSdk 36
+
+    defaultConfig {
+        minSdk 23
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+}

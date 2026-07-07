@@ -36,7 +36,7 @@ android {
     namespace "com.unity3d.player"
     ndkPath "**NDKPATH**"
     ndkVersion "**NDKVERSION**"
-    compileSdk **APIVERSION**
+    compileSdk 36
     buildToolsVersion "**BUILDTOOLS**"
 
     compileOptions {
@@ -46,7 +46,7 @@ android {
 
     defaultConfig {
         minSdk **MINSDK**
-        targetSdk **TARGETSDK**
+        targetSdk 35
         ndk {
             abiFilters **ABIFILTERS**
             debugSymbolLevel **DEBUGSYMBOLLEVEL**

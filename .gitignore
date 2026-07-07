@@ -62,3 +62,4 @@ crashlytics-build.properties
 .omc/
 .vscode/
 Assets/Firebase/Plugins/x86_64/
+.utmp/
