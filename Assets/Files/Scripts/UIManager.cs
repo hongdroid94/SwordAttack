@@ -70,14 +70,18 @@ public class UIManager : MonoBehaviour
 		{
 			endTitleText.text = "<color=red>YOU DIED</color>";
 		}
-		else 
+		else
 		{
 			endTitleText.text = "FINISH !";
-			ranking.WriteNewRanking(Nickname, gamePanel.stopWatch);
-
+			// Apple 5.1.2 대응: 글로벌 랭킹 서버 업로드 전에 사용자 동의를 받는다.
+			// 이미 동의한 경우 팝업 없이 즉시 업로드, 아니면 동의 팝업을 띄운다.
+			string nickname = Nickname;
+			string record = gamePanel.stopWatch;
+			RankingConsent.Show(nickname, record,
+				onAgree: () => ranking.WriteNewRanking(nickname, record));
 		}
 
-		// �ֵ�� ���� 40%
+		// �ֵ�� ���� 40%
 		if (Random.Range(0, 101) > 60) 
 		{
 			admobManager.ShowRewardAd();
