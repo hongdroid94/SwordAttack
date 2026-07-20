@@ -173,8 +173,15 @@ public class PlayerController : MonoBehaviour
 	void OnTriggerEnter2D(Collider2D collision)
 	{
 		// Ŭ����
-		if (collision.CompareTag("EndFlag")) 
+		if (collision.CompareTag("EndFlag"))
 		{
+			// 마지막 스테이지가 아니면 다음 맵으로 넘어간다. 클리어 처리는 StageManager가 판단한다.
+			if (StageManager.Instance != null)
+			{
+				StageManager.Instance.OnGoalReached();
+				return;
+			}
+
 			print("Win");
 			FindObjectOfType<GamePanel>().StopStopWatch();
 			UIManager.Inst.ShowEndPanel(false);
