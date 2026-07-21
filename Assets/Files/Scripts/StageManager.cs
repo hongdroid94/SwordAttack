@@ -63,6 +63,8 @@ public class StageManager : MonoBehaviour
 	{
 		Instance = this;
 		Acquire();
+		// 스냅샷보다 먼저 해야 스테이지 1로 되돌아올 때도 바뀐 타일이 유지된다.
+		DecorationTiles.Apply(decorationMap);
 		CaptureStage1();
 	}
 
