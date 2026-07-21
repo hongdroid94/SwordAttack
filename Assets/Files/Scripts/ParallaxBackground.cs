@@ -16,16 +16,23 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class ParallaxBackground : MonoBehaviour
 {
-	// 뒤에서 앞 순서. 계수가 0이면 카메라에 완전히 붙어 무한히 먼 것처럼 보이고,
-	// 1이면 월드에 고정되어 지형과 똑같이 움직인다.
-	static readonly (string name, float factor)[] LayerSetup =
+	// 뒤에서 앞 순서.
+	// factor: 0이면 카메라에 완전히 붙어 무한히 먼 것처럼 보이고, 1이면 지형과 똑같이 움직인다.
+	// brightness: 배경 원화가 밝은 베이지라 그대로 깔면 배경이 전경보다 밝아진다.
+	//   암반 타일이 (33,38,63)로 매우 어둡기 때문에, 지형이 오히려 검은 덩어리처럼
+	//   눌려 보인다. 배경을 눌러서 뒤로 물러나게 한다.
+	//   멀수록 더 어둡게 해 공기원근을 준다. 별 레이어는 점 몇 개뿐이라 살려둔다.
+	static readonly (string name, float factor, float brightness)[] LayerSetup =
 	{
-		("bg5", 0.03f),   // 밤하늘 + 별
-		("bg4", 0.10f),   // 먼 바위
-		("bg3", 0.20f),   // 아치 바위
-		("bg2", 0.35f),   // 중간 절벽
-		("bg",  0.55f),   // 가까운 절벽
+		("bg5", 0.03f, 0.75f),   // 밤하늘 + 별
+		("bg4", 0.10f, 0.26f),   // 먼 바위
+		("bg3", 0.20f, 0.30f),   // 아치 바위
+		("bg2", 0.35f, 0.34f),   // 중간 절벽
+		("bg",  0.55f, 0.38f),   // 가까운 절벽
 	};
+
+	// 배경을 밤 팔레트로 통일하기 위한 색조. 파랑 쪽으로 살짝 민다.
+	static readonly Color LayerTint = new Color(0.82f, 0.88f, 1f);
 
 	// 암반(33,38,63)보다 확실히 어두워야 벽이 벽으로 읽힌다.
 	static readonly Color BackdropColor = new Color32(14, 16, 30, 255);
@@ -112,6 +119,8 @@ public class ParallaxBackground : MonoBehaviour
 				piece.transform.localPosition = new Vector3(copy * width, 0f, 0f);
 				SpriteRenderer sr = piece.AddComponent<SpriteRenderer>();
 				sr.sprite = sprite;
+				float b = LayerSetup[i].brightness;
+				sr.color = new Color(LayerTint.r * b, LayerTint.g * b, LayerTint.b * b, 1f);
 				sr.sortingLayerID = 0;
 				sr.sortingOrder = BaseSortingOrder + i;
 			}
