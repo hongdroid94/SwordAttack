@@ -30,6 +30,10 @@ public class StageManager : MonoBehaviour
 	Rigidbody2D playerBody;
 	Transform endFlag;
 	GameObject enemies;
+	// 종류별 대표 적. 스테이지 2에서 이걸 복제해 배치한다.
+	readonly Dictionary<char, GameObject> enemyPrototypes = new();
+	// 스테이지 2에서 스폰한 적. 스테이지를 떠날 때 정리한다.
+	readonly List<GameObject> spawnedEnemies = new();
 	PolygonCollider2D cameraBounds;
 	CinemachineConfiner2D confiner;
 	CinemachineVirtualCameraBase vcam;
@@ -87,6 +91,17 @@ public class StageManager : MonoBehaviour
 		GameObject flag = GameObject.Find("EndFlag");
 		if (flag != null) endFlag = flag.transform;
 		enemies = GameObject.Find("Enemies");
+
+		// 씬에 배치된 적들에서 종류별 대표를 하나씩 잡아둔다.
+		// 아직 활성 상태인 지금(Awake) 잡아야 나중에 복제할 수 있다.
+		if (enemies != null)
+		{
+			foreach (Transform child in enemies.transform)
+			{
+				char kind = KindOf(child.name);
+				if (kind != '\0' && !enemyPrototypes.ContainsKey(kind)) enemyPrototypes[kind] = child.gameObject;
+			}
+		}
 
 		GameObject range = GameObject.Find("CMRange");
 		if (range != null) cameraBounds = range.GetComponent<PolygonCollider2D>();
@@ -159,6 +174,8 @@ public class StageManager : MonoBehaviour
 		}
 
 		if (endFlag != null) endFlag.position = stage1Goal;
+
+		ClearSpawnedEnemies();
 		if (enemies != null) enemies.SetActive(true);
 
 		if (cameraBounds != null && stage1CameraPaths != null)
@@ -185,8 +202,10 @@ public class StageManager : MonoBehaviour
 		if (decorationMap != null) decorationMap.ClearAllTiles();
 		builder.Paint(wallMap, Stage2Origin);
 
-		// 임시 맵이라 적은 두지 않는다.
+		// 스테이지 1 적은 감추고, 이 맵에 적힌 위치대로 새로 배치한다.
 		if (enemies != null) enemies.SetActive(false);
+		ClearSpawnedEnemies();   // Shift+2 재진입 시 중복 방지
+		SpawnEnemies(builder.EnemySpawns);
 
 		Vector3 spawn = CellToWorld(builder.Spawn + Stage2Origin);
 		if (endFlag != null) endFlag.position = CellToWorld(builder.Goal + Stage2Origin);
@@ -207,6 +226,37 @@ public class StageManager : MonoBehaviour
 		}
 
 		Teleport(spawn);
+	}
+
+	void SpawnEnemies(List<(char kind, Vector2Int cell)> spawns)
+	{
+		for (int i = 0; i < spawns.Count; i++)
+		{
+			if (!enemyPrototypes.TryGetValue(spawns[i].kind, out GameObject prototype) || prototype == null) continue;
+
+			GameObject enemy = Instantiate(prototype, CellToWorld(spawns[i].cell + Stage2Origin), Quaternion.identity);
+			enemy.SetActive(true);   // 원본이 비활성이어도 복제본은 켠다.
+			spawnedEnemies.Add(enemy);
+		}
+	}
+
+	void ClearSpawnedEnemies()
+	{
+		for (int i = 0; i < spawnedEnemies.Count; i++)
+		{
+			if (spawnedEnemies[i] != null) Destroy(spawnedEnemies[i]);
+		}
+		spawnedEnemies.Clear();
+	}
+
+	/// <summary>인스턴스 이름(Enemy_Bat 등)을 맵 마커 문자로 바꾼다.</summary>
+	static char KindOf(string name)
+	{
+		if (name.Contains("Bat")) return 'b';
+		if (name.Contains("Wolf")) return 'w';
+		if (name.Contains("Golem")) return 'g';
+		if (name.Contains("Witch")) return 't';
+		return '\0';
 	}
 
 	Vector3 CellToWorld(Vector2Int cell)

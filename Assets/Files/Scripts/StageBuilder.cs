@@ -19,6 +19,13 @@ public class StageBuilder
 	public Vector2Int Spawn { get; private set; } = new Vector2Int(2, 2);
 	public Vector2Int Goal { get; private set; } = new Vector2Int(10, 2);
 
+	// 적 스폰 지점. 문자는 종류를, 좌표는 셀 위치를 뜻한다.
+	public readonly List<(char kind, Vector2Int cell)> EnemySpawns = new();
+
+	// 맵 텍스트에서 적을 나타내는 문자. 전부 통행 가능(빈칸)으로 취급한다.
+	//   b=Bat(공중) w=Wolf(지상) g=Golem(지상) t=witch(마녀·원거리)
+	const string EnemyChars = "bwgt";
+
 	static Sprite[] sprites;
 	static readonly Dictionary<int, TileBase> tileCache = new();
 
@@ -42,6 +49,7 @@ public class StageBuilder
 				if (c == '#') Wall[x, y] = true;
 				else if (c == 'P') Spawn = new Vector2Int(x, y);
 				else if (c == 'G') Goal = new Vector2Int(x, y);
+				else if (EnemyChars.IndexOf(c) >= 0) EnemySpawns.Add((c, new Vector2Int(x, y)));
 			}
 		}
 	}
