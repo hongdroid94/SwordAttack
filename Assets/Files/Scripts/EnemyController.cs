@@ -40,7 +40,8 @@ public class EnemyController : MonoBehaviour
     int nextMove;
     int tileLayer;
     int playerLayer;
-    
+    bool initialized;
+
     int rightValue => isRight ? 1 : -1;
 
 
@@ -51,11 +52,24 @@ public class EnemyController : MonoBehaviour
         waitDic = new();
         tileLayer = LayerMask.GetMask("Tile");
         playerLayer = LayerMask.GetMask("Player");
+        initialized = true;
 
         StartCoroutine(nameof(EnemyAnimCo));
         Invoke("Think", 5);
 
 		GetComponent<Damaged>().Defect += Defect;
+    }
+
+    void OnEnable()
+    {
+        // GameObject를 껐다 켜면 코루틴과 Invoke가 모두 취소되고 저절로 되살아나지 않는다.
+        // Start는 한 번만 돌기 때문에 애니메이션(EnemyAnimCo)과 AI(Think)가 영영 멈춘 채
+        // FixedUpdate만 계속 돌아서 "스프라이트가 멈춘 채 미끄러지는" 상태가 된다.
+        // 첫 활성화 때는 OnEnable이 Start보다 먼저 도므로 Start에 맡긴다.
+        if (!initialized || isDie) return;
+
+        StartCoroutine(nameof(EnemyAnimCo));
+        Invoke("Think", 2);
     }
 
 	void OnDestroy()
@@ -75,7 +89,12 @@ public class EnemyController : MonoBehaviour
         while (true) 
         {
             EnemyInfo curEnemyInfo = Array.Find(enemyInfos, x => x.eEnemyState == _eEnemyState);
-            if (curEnemyInfo == null) continue;
+            if (curEnemyInfo == null)
+            {
+                // yield 없이 continue 하면 이 while이 한 프레임 안에서 무한히 돌아 에디터가 멈춘다.
+                yield return null;
+                continue;
+            }
 
             for (int i = 0; i < curEnemyInfo.sprites.Length; i++)
 			{
