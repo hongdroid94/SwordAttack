@@ -80,24 +80,56 @@ public class StageBuilder
 	{
 		if (tileCache.TryGetValue(spriteIndex, out TileBase cached)) return cached;
 
-		if (sprites == null)
+		if (sprites == null) LoadSprites();
+
+		Sprite sprite = (spriteIndex >= 0 && spriteIndex < sprites.Length) ? sprites[spriteIndex] : null;
+		if (sprite == null)
 		{
-			Sprite[] loaded = Resources.LoadAll<Sprite>("Tiles/cavesofgallet_tiles");
-			sprites = new Sprite[loaded.Length];
-			// LoadAll의 순서는 보장되지 않으므로 이름 뒤 숫자로 자리를 잡는다.
-			for (int i = 0; i < loaded.Length; i++)
-			{
-				int underscore = loaded[i].name.LastIndexOf('_');
-				if (underscore < 0) continue;
-				if (!int.TryParse(loaded[i].name.Substring(underscore + 1), out int n)) continue;
-				if (n >= 0 && n < sprites.Length) sprites[n] = loaded[i];
-			}
+			// 스프라이트가 없으면 눈에는 안 보이는데 콜라이더만 남아
+			// "투명한 벽"이 된다. 조용히 넘어가면 원인을 못 찾는다.
+			Debug.LogError($"[StageBuilder] 스프라이트 {spriteIndex}번을 찾지 못했습니다. (불러온 개수 {sprites.Length})");
 		}
 
 		Tile tile = ScriptableObject.CreateInstance<Tile>();
-		tile.sprite = (spriteIndex >= 0 && spriteIndex < sprites.Length) ? sprites[spriteIndex] : null;
-		tile.colliderType = Tile.ColliderType.Sprite;   // 원본 타일 에셋과 동일
+		tile.sprite = sprite;
+		// 아래 네 줄은 원본 Tile 에셋(cavesofgallet_tiles_*.asset)의 값과 맞춘 것이다.
+		// 에디터로 만든 에셋은 이 값들이 직렬화돼 있지만
+		// CreateInstance로 만든 Tile은 기본값에 의존하게 되므로 명시한다.
+		tile.color = Color.white;
+		tile.transform = Matrix4x4.identity;
+		tile.flags = TileFlags.LockColor;
+		tile.colliderType = Tile.ColliderType.Sprite;
 		tileCache[spriteIndex] = tile;
 		return tile;
+	}
+
+	static void LoadSprites()
+	{
+		Sprite[] loaded = Resources.LoadAll<Sprite>("Tiles/cavesofgallet_tiles");
+
+		// 배열 크기는 불러온 개수가 아니라 이름에 붙은 최대 번호로 잡아야 한다.
+		// 개수로 잡으면 번호가 큰 스프라이트가 조용히 누락된다.
+		int max = -1;
+		for (int i = 0; i < loaded.Length; i++)
+		{
+			if (TryParseIndex(loaded[i].name, out int n)) max = Mathf.Max(max, n);
+		}
+
+		sprites = new Sprite[max + 1];
+		// LoadAll의 순서는 보장되지 않으므로 이름 뒤 숫자로 자리를 잡는다.
+		for (int i = 0; i < loaded.Length; i++)
+		{
+			if (TryParseIndex(loaded[i].name, out int n)) sprites[n] = loaded[i];
+		}
+
+		if (loaded.Length == 0) Debug.LogError("[StageBuilder] Resources/Tiles/cavesofgallet_tiles 를 불러오지 못했습니다.");
+	}
+
+	static bool TryParseIndex(string name, out int index)
+	{
+		index = -1;
+		int underscore = name.LastIndexOf('_');
+		if (underscore < 0) return false;
+		return int.TryParse(name.Substring(underscore + 1), out index) && index >= 0;
 	}
 }
