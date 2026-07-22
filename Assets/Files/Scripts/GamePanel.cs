@@ -36,13 +36,13 @@ public class GamePanel : MonoBehaviour
 			Instantiate(lifeView.GetChild(0).gameObject, lifeView).name = "LifeImage";
 		}
 
-		playerDamaged.Defect += PlayerDefect;
+		// 피격·회복 모두 HealthChanged로 통일한다.
+		playerDamaged.HealthChanged += RefreshHearts;
 	}
 
 	void OnDestroy()
 	{
-		playerDamaged.Defect -= PlayerDefect;
-
+		playerDamaged.HealthChanged -= RefreshHearts;
 	}
 
 	void Update()
@@ -64,13 +64,13 @@ public class GamePanel : MonoBehaviour
 
 	public void PausePanel()
 	{
-		print("����");
+		print("����");
 		UIManager.Inst.ShowPanel("PausePanel");
 		Time.timeScale = 0;
 	}
 	public void PauseResumePanel()
 	{
-		print("�簳");
+		print("�簳");
 		UIManager.Inst.ShowPanel("GamePanel");
 		Time.timeScale = 1;
 	}
@@ -85,14 +85,12 @@ public class GamePanel : MonoBehaviour
 		Application.Quit();
 	}
 
-	void PlayerDefect(bool isDie, int health, int damageDir) 
+	// 하트를 Destroy하지 않고 켜고 끈다. 회복하면 다시 채워야 하기 때문이다.
+	void RefreshHearts(int health)
 	{
 		for (int i = 0; i < lifeView.childCount; i++)
 		{
-			if (i >= health)
-			{
-				Destroy(lifeView.GetChild(i).gameObject);
-			}
+			lifeView.GetChild(i).gameObject.SetActive(i < health);
 		}
 	}
 }

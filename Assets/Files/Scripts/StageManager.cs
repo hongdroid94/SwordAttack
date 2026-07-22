@@ -34,6 +34,10 @@ public class StageManager : MonoBehaviour
 	readonly Dictionary<char, GameObject> enemyPrototypes = new();
 	// 스테이지 2에서 스폰한 적. 스테이지를 떠날 때 정리한다.
 	readonly List<GameObject> spawnedEnemies = new();
+	// 스폰한 라이프 아이템. 스테이지를 떠날 때 정리한다.
+	readonly List<GameObject> spawnedItems = new();
+	// 스테이지 1 하트 위치(월드). 적 위치를 샘플링해 Awake에서 한 번 정해 둔다.
+	readonly List<Vector3> stage1ItemPositions = new();
 	PolygonCollider2D cameraBounds;
 	CinemachineConfiner2D confiner;
 	CinemachineVirtualCameraBase vcam;
@@ -69,6 +73,7 @@ public class StageManager : MonoBehaviour
 		Acquire();
 		// 스냅샷보다 먼저 해야 스테이지 1로 되돌아올 때도 바뀐 타일이 유지된다.
 		DecorationTiles.Apply(decorationMap);
+		PlanStage1Items();
 		CaptureStage1();
 	}
 
@@ -178,6 +183,8 @@ public class StageManager : MonoBehaviour
 		ClearSpawnedEnemies();
 		if (enemies != null) enemies.SetActive(true);
 
+		SpawnItems(stage1ItemPositions);
+
 		if (cameraBounds != null && stage1CameraPaths != null)
 		{
 			cameraBounds.pathCount = stage1CameraPaths.Count;
@@ -206,6 +213,10 @@ public class StageManager : MonoBehaviour
 		if (enemies != null) enemies.SetActive(false);
 		ClearSpawnedEnemies();   // Shift+2 재진입 시 중복 방지
 		SpawnEnemies(builder.EnemySpawns);
+
+		List<Vector3> itemPositions = new List<Vector3>();
+		for (int i = 0; i < builder.ItemSpawns.Count; i++) itemPositions.Add(CellToWorld(builder.ItemSpawns[i] + Stage2Origin));
+		SpawnItems(itemPositions);
 
 		Vector3 spawn = CellToWorld(builder.Spawn + Stage2Origin);
 		if (endFlag != null) endFlag.position = CellToWorld(builder.Goal + Stage2Origin);
@@ -274,6 +285,47 @@ public class StageManager : MonoBehaviour
 			if (spawnedEnemies[i] != null) Destroy(spawnedEnemies[i]);
 		}
 		spawnedEnemies.Clear();
+	}
+
+	/// <summary>
+	/// 스테이지 1 하트 위치를 정한다. 맵을 손으로 뜯지 않고, 적이 순찰하는 위치를
+	/// x축으로 고르게 샘플링해 그 위에 놓는다. 적이 다니는 곳이므로 플레이어 경로가 보장된다.
+	/// </summary>
+	void PlanStage1Items()
+	{
+		if (enemies == null) return;
+
+		List<Vector3> spots = new List<Vector3>();
+		foreach (Transform child in enemies.transform) spots.Add(child.position);
+		if (spots.Count == 0) return;
+
+		spots.Sort((a, b) => a.x.CompareTo(b.x));
+
+		// 4곳을 고르게 뽑아 적 머리 위쯤에 하트를 둔다.
+		int count = Mathf.Min(4, spots.Count);
+		for (int i = 0; i < count; i++)
+		{
+			int idx = Mathf.RoundToInt((spots.Count - 1) * (i + 0.5f) / count);
+			stage1ItemPositions.Add(spots[idx] + Vector3.up * 2f);
+		}
+	}
+
+	void SpawnItems(List<Vector3> positions)
+	{
+		ClearSpawnedItems();
+		for (int i = 0; i < positions.Count; i++)
+		{
+			spawnedItems.Add(LifeItem.Spawn(positions[i], transform));
+		}
+	}
+
+	void ClearSpawnedItems()
+	{
+		for (int i = 0; i < spawnedItems.Count; i++)
+		{
+			if (spawnedItems[i] != null) Destroy(spawnedItems[i]);
+		}
+		spawnedItems.Clear();
 	}
 
 	/// <summary>인스턴스 이름(Enemy_Bat 등)을 맵 마커 문자로 바꾼다.</summary>

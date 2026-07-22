@@ -21,10 +21,14 @@ public class StageBuilder
 
 	// 적 스폰 지점. 문자는 종류를, 좌표는 셀 위치를 뜻한다.
 	public readonly List<(char kind, Vector2Int cell)> EnemySpawns = new();
+	// 라이프 아이템(하트) 스폰 지점.
+	public readonly List<Vector2Int> ItemSpawns = new();
 
 	// 맵 텍스트에서 적을 나타내는 문자. 전부 통행 가능(빈칸)으로 취급한다.
 	//   b=Bat(공중) w=Wolf(지상) g=Golem(지상) t=witch(마녀·원거리)
 	const string EnemyChars = "bwgt";
+	// h = 하트(라이프) 아이템.
+	const char ItemChar = 'h';
 
 	static Sprite[] sprites;
 	static readonly Dictionary<int, TileBase> tileCache = new();
@@ -50,6 +54,7 @@ public class StageBuilder
 				else if (c == 'P') Spawn = new Vector2Int(x, y);
 				else if (c == 'G') Goal = new Vector2Int(x, y);
 				else if (EnemyChars.IndexOf(c) >= 0) EnemySpawns.Add((c, new Vector2Int(x, y)));
+				else if (c == ItemChar) ItemSpawns.Add(new Vector2Int(x, y));
 			}
 		}
 	}
