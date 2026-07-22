@@ -230,14 +230,41 @@ public class StageManager : MonoBehaviour
 
 	void SpawnEnemies(List<(char kind, Vector2Int cell)> spawns)
 	{
+		int tileLayer = LayerMask.GetMask("Tile");
+
 		for (int i = 0; i < spawns.Count; i++)
 		{
 			if (!enemyPrototypes.TryGetValue(spawns[i].kind, out GameObject prototype) || prototype == null) continue;
 
-			GameObject enemy = Instantiate(prototype, CellToWorld(spawns[i].cell + Stage2Origin), Quaternion.identity);
+			Vector3 pos = CellToWorld(spawns[i].cell + Stage2Origin);
+			GameObject enemy = Instantiate(prototype, pos, Quaternion.identity);
 			enemy.SetActive(true);   // 원본이 비활성이어도 복제본은 켠다.
+
+			// 적은 중력이 없고 Y축이 고정(gravityScale 0, FreezePositionY)이라
+			// 물리로 떨어지지 않는다. 놓은 자리에 그대로 뜬다.
+			// 지상 적은 콜라이더 하단을 바닥 표면에 직접 맞춰 앉힌다.
+			// 박쥐(b)는 원래 공중을 나는 적이므로 건드리지 않는다.
+			if (spawns[i].kind != 'b') SnapToGround(enemy, pos, tileLayer);
+
 			spawnedEnemies.Add(enemy);
 		}
+	}
+
+	static void SnapToGround(GameObject enemy, Vector3 spawnPos, int tileLayer)
+	{
+		Collider2D col = enemy.GetComponentInChildren<Collider2D>();
+		if (col == null) return;
+
+		// 방금 옮긴 위치를 물리 엔진에 반영해야 bounds가 최신이 된다.
+		Physics2D.SyncTransforms();
+
+		// 스폰 지점 위에서 아래로 쏴 바닥 표면을 찾는다.
+		RaycastHit2D hit = Physics2D.Raycast(spawnPos + Vector3.up * 2f, Vector2.down, 40f, tileLayer);
+		if (hit.collider == null) return;
+
+		// 피벗에서 콜라이더 바닥까지의 거리만큼 올려, 발이 표면에 닿게 한다.
+		float pivotToFoot = enemy.transform.position.y - col.bounds.min.y;
+		enemy.transform.position = new Vector3(spawnPos.x, hit.point.y + pivotToFoot, spawnPos.z);
 	}
 
 	void ClearSpawnedEnemies()
