@@ -50,6 +50,8 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] float jumpPower;
 	[SerializeField] float speed;
 	[SerializeField] float groundDistance;
+	// 지면 판정 레이를 발 좌우로 얼마나 벌릴지. 플레이어 폭(0.87)의 절반 근처.
+	[SerializeField] float groundRayOffset = 0.4f;
 	[SerializeField] float climbDistance;
 	[SerializeField] float attackTime;
 	[SerializeField] float dieTime;
@@ -385,16 +387,22 @@ public class PlayerController : MonoBehaviour
 	}
 
 
-	void GroundCheck() 
+	void GroundCheck()
 	{
-		if (isDebugLine)
-		{
-			Debug.DrawLine(rbody.position, rbody.position + Vector2.down * groundDistance);
-		}
-		isJump = Physics2D.Raycast(rbody.position, Vector2.down, groundDistance, tileLayer).collider == null;
+		// 몸통 중앙 하나만 쏘면 땅 끝에 섰을 때 중앙이 모서리 밖으로 나가
+		// 공중으로 판정돼 점프가 안 먹는다. 발 좌우까지 세 점을 쏴서
+		// 하나라도 바닥에 닿으면 지상으로 본다.
+		isJump = !GroundRay(0f) && !GroundRay(groundRayOffset) && !GroundRay(-groundRayOffset);
 
 		// 착지하면 공중 대시를 다시 충전한다.
 		if (!isJump) airDashUsed = false;
+	}
+
+	bool GroundRay(float xOffset)
+	{
+		Vector2 origin = rbody.position + Vector2.right * xOffset;
+		if (isDebugLine) Debug.DrawLine(origin, origin + Vector2.down * groundDistance);
+		return Physics2D.Raycast(origin, Vector2.down, groundDistance, tileLayer).collider != null;
 	}
 
 	void ClimbCheck()

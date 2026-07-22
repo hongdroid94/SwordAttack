@@ -33,9 +33,9 @@ public class EnemyController : MonoBehaviour
 
     [Header("Knockback")]
     // 플레이어에게 맞았을 때 밀려나는 세기. Rigidbody linearDrag(2)로 서서히 감쇠한다.
-    [SerializeField] float knockbackPower = 8f;
+    [SerializeField] float knockbackPower = 4f;
     // 밀려나는 동안 이동 AI를 멈추는 시간.
-    [SerializeField] float knockbackTime = 0.25f;
+    [SerializeField] float knockbackTime = 0.15f;
 
     Rigidbody2D rbody;
     SpriteRenderer spriteRenderer;
@@ -44,6 +44,7 @@ public class EnemyController : MonoBehaviour
     bool isDie;
     bool isRight;
     bool isKnockback;
+    int knockbackDir;
     int nextMove;
     int tileLayer;
     int playerLayer;
@@ -125,7 +126,18 @@ public class EnemyController : MonoBehaviour
         if (isDie) return;
 
         // 넉백 중에는 이동 AI가 속도를 덮어쓰지 않게 둔다. drag로 알아서 감쇠한다.
-        if (isKnockback) return;
+        if (isKnockback)
+        {
+            // 적 콜라이더는 트리거라 지형과 물리 충돌하지 않는다. 그냥 밀면 벽을 뚫는다.
+            // 넉백 방향에 벽이 있으면 직접 멈춰 세운다.
+            Vector2 wallOrigin = groundPos.position + Vector3.up * 0.5f;
+            if (Physics2D.Raycast(wallOrigin, Vector2.right * knockbackDir, wallDistance, tileLayer))
+            {
+                rbody.linearVelocity = Vector2.zero;
+                isKnockback = false;
+            }
+            return;
+        }
 
         // ������
         if (!isAttack)
@@ -236,6 +248,7 @@ public class EnemyController : MonoBehaviour
     IEnumerator KnockbackCo(int dir)
     {
         isKnockback = true;
+        knockbackDir = dir;
         // Y는 고정(FreezePositionY)이라 수평 속도만 준다. drag가 서서히 줄인다.
         rbody.linearVelocity = new Vector2(dir * knockbackPower, 0f);
         yield return Wait(knockbackTime);
