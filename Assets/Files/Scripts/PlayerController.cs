@@ -351,7 +351,8 @@ public class PlayerController : MonoBehaviour
 		{
 			if (hits[i].collider.TryGetComponent(out Damaged damaged))
 			{
-				damaged.Damage(1);
+				// rightValue = 플레이어가 보는 방향. 적이 그 방향으로 넉백된다.
+				damaged.Damage(1, rightValue);
 			}
 		}
 

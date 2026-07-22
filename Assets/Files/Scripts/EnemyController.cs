@@ -31,12 +31,19 @@ public class EnemyController : MonoBehaviour
     [SerializeField] Vector2 attackSize;
     [SerializeField] Transform groundPos;
 
+    [Header("Knockback")]
+    // 플레이어에게 맞았을 때 밀려나는 세기. Rigidbody linearDrag(2)로 서서히 감쇠한다.
+    [SerializeField] float knockbackPower = 8f;
+    // 밀려나는 동안 이동 AI를 멈추는 시간.
+    [SerializeField] float knockbackTime = 0.25f;
+
     Rigidbody2D rbody;
     SpriteRenderer spriteRenderer;
     Dictionary<float, WaitForSeconds> waitDic;
     bool isAttack;
     bool isDie;
     bool isRight;
+    bool isKnockback;
     int nextMove;
     int tileLayer;
     int playerLayer;
@@ -117,8 +124,11 @@ public class EnemyController : MonoBehaviour
     {
         if (isDie) return;
 
+        // 넉백 중에는 이동 AI가 속도를 덮어쓰지 않게 둔다. drag로 알아서 감쇠한다.
+        if (isKnockback) return;
+
         // ������
-        if (!isAttack) 
+        if (!isAttack)
         {
             rbody.linearVelocity = new Vector2(nextMove * moveSpeed, rbody.linearVelocity.y);
         }
@@ -206,7 +216,7 @@ public class EnemyController : MonoBehaviour
     {
         SoundManager.Instance.PlaySFXSound("Monster_Damage");
 
-        if (isDie) 
+        if (isDie)
         {
             this.isDie = true;
             _eEnemyState = EEnemyState.DIE;
@@ -215,5 +225,20 @@ public class EnemyController : MonoBehaviour
             GetComponent<Collider2D>().enabled = false;
             Destroy(gameObject, dieTime);
         }
+        else if (damageDir != 0)
+        {
+            // 죽지 않았으면 맞은 방향으로 밀려난다.
+            StopCoroutine(nameof(KnockbackCo));
+            StartCoroutine(KnockbackCo(damageDir));
+        }
+    }
+
+    IEnumerator KnockbackCo(int dir)
+    {
+        isKnockback = true;
+        // Y는 고정(FreezePositionY)이라 수평 속도만 준다. drag가 서서히 줄인다.
+        rbody.linearVelocity = new Vector2(dir * knockbackPower, 0f);
+        yield return Wait(knockbackTime);
+        isKnockback = false;
     }
 }
